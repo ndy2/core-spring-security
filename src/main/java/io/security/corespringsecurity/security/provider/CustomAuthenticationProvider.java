@@ -33,7 +33,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         String presentedPassword = authentication.getCredentials().toString();
         if(!passwordEncoder.matches(presentedPassword, accountContext.getPassword())){
-            throw new BadCredentialsException("Authentication failed: password does not match stored value");
+            throw new BadCredentialsException("비밀 번호를 확인하세요");
         }
 
         FormWebAuthenticationDetails details = (FormWebAuthenticationDetails) authentication.getDetails();
