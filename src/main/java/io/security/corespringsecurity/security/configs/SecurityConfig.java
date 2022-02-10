@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -31,12 +32,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
-
     private final AccessDeniedHandler accessDeniedHandler;
 
     private final AuthenticationProvider ajaxAuthenticationProvider;
     private final AuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
     private final AuthenticationFailureHandler ajaxAuthenticationFailureHandler;
+
+    private final AuthenticationEntryPoint ajaxAuthenticationEntrypoint;
+    private final AccessDeniedHandler ajaxAccessDeniedHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -85,7 +88,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
         http.csrf().disable();
-                customConfigurer(http);
+        customConfigurer(http);
+
+        http.authorizeRequests()
+                .anyRequest().authenticated();
     }
 
     private void customConfigurer(HttpSecurity http) throws Exception {
@@ -94,7 +100,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandlerAjax(ajaxAuthenticationSuccessHandler)
                 .failureHandlerAjax(ajaxAuthenticationFailureHandler)
                 .loginProcessingUrl("/api/login")
-                .setAuthenticationManager(authenticationManagerBean());
+                .setAuthenticationManager(authenticationManagerBean())
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(ajaxAuthenticationEntrypoint)
+                .accessDeniedHandler(ajaxAccessDeniedHandler);
+
+        http.authorizeRequests()
+                .antMatchers("/api/message").hasRole("USER");
     }
 
     @Bean
