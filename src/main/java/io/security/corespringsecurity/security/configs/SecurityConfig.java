@@ -27,14 +27,16 @@ import javax.servlet.http.HttpServletRequest;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationProvider authenticationProvider;
-    private final AuthenticationProvider ajaxAuthenticationProvider;
-
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
 
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
     private final AccessDeniedHandler accessDeniedHandler;
+
+    private final AuthenticationProvider ajaxAuthenticationProvider;
+    private final AuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
+    private final AuthenticationFailureHandler ajaxAuthenticationFailureHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -89,6 +91,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private void customConfigurer(HttpSecurity http) throws Exception {
         http
                 .apply(new AjaxSecurityConfigurer<>())
+                .successHandlerAjax(ajaxAuthenticationSuccessHandler)
+                .failureHandlerAjax(ajaxAuthenticationFailureHandler)
                 .loginProcessingUrl("/api/login")
                 .setAuthenticationManager(authenticationManagerBean());
     }

@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -16,6 +18,8 @@ public class AjaxSecurityConfigurer<H extends HttpSecurityBuilder<H>> extends
         AbstractAuthenticationFilterConfigurer<H, AjaxSecurityConfigurer<H>, AjaxAuthenticationFilter> {
 
     private AuthenticationManager authenticationManager;
+    private AuthenticationSuccessHandler successHandler;
+    private AuthenticationFailureHandler failureHandler;
 
     public AjaxSecurityConfigurer() {
         super(new AjaxAuthenticationFilter(), null);
@@ -26,6 +30,9 @@ public class AjaxSecurityConfigurer<H extends HttpSecurityBuilder<H>> extends
         configureAuthenticationManager(http);
         configureSessionAuthenticationStrategy(http);
         configureRememberMeService(http);
+
+        getAuthenticationFilter().setAuthenticationSuccessHandler(successHandler);
+        getAuthenticationFilter().setAuthenticationFailureHandler(failureHandler);
 
         http.setSharedObject(AjaxAuthenticationFilter.class,getAuthenticationFilter());
         http.addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -63,4 +70,15 @@ public class AjaxSecurityConfigurer<H extends HttpSecurityBuilder<H>> extends
     protected RequestMatcher createLoginProcessingUrlMatcher(String loginProcessingUrl) {
         return new AntPathRequestMatcher(loginProcessingUrl, "POST");
     }
+
+    public AjaxSecurityConfigurer<H> successHandlerAjax(AuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+        return this;
+    }
+
+    public AjaxSecurityConfigurer<H> failureHandlerAjax(AuthenticationFailureHandler authenticationFailureHandler) {
+        this.failureHandler = authenticationFailureHandler;
+        return this;
+    }
+
 }

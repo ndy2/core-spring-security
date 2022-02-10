@@ -53,6 +53,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
     private Authentication createSuccessAuthentication(Authentication authentication, AccountContext accountContext) {
-        return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),authentication.getPrincipal(),accountContext.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(accountContext,authentication.getCredentials(),accountContext.getAuthorities());
     }
 }

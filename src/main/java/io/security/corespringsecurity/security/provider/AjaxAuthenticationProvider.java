@@ -45,7 +45,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
 
     private Authentication createSuccessAuthentication(Authentication authentication, AccountContext accountContext) {
-        return new AjaxAuthenticationToken(authentication.getPrincipal(),authentication.getPrincipal(),accountContext.getAuthorities());
+        return new AjaxAuthenticationToken(accountContext,authentication.getCredentials(),accountContext.getAuthorities());
     }
 
 }
