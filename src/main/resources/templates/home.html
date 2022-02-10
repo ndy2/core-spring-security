@@ -5,20 +5,8 @@
 <div th:replace="layout/top::header"></div>
 <div class="container">
     <div class="row align-items-start">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <div style="padding-top:10px;" class="nav flex-column nav-pills" aria-orientation="vertical">
-                            <a th:href="@{/}" style="margin:5px;" class="nav-link active">대시보드</a>
-                            <a href="#" onclick="getApi('mypage')" style="margin:5px;" class="nav-link text-primary">마이페이지</a>
-                            <a href="#" onclick="getApi('messages')" style="margin:5px;" class="nav-link text-primary">메시지</a>
-                            <a href="#" onclick="getApi('config')" style="margin:5px;" class="nav-link text-primary">환경설정</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+       <nav th:replace="layout/left::leftmenu"></nav>
+
         <div style="padding-top:50px;"  class="col">
             <div class="container text-center">
                 <h1 class="text-primary">DASHBOARD</h1>
@@ -29,42 +17,6 @@
     </div>
 </div>
 <div th:replace="layout/footer::footer"></div>
-
-<script>
-  function getApi(location) {
-    var csrfHeader = $('meta[name="_csrf_header"]').attr('content')
-    var csrfToken = $('meta[name="_csrf"]').attr('content')
-
-    $.ajax({
-      type: "get",
-      url: "/api/"+location,
-      dataType: "json",
-      beforeSend: function (xhr) {
-          if(csrfHeader&& csrfToken){
-                console.log("csrf set");
-                xhr.setRequestHeader(csrfHeader, csrfToken);
-          }
-        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        xhr.setRequestHeader("Content-type", "application/json");
-      },
-      success: function(data) {
-        console.log("data" +data);
-        window.location = '/'+location;
-      },
-      error: function (xhr, status, error) {
-          console.log("status :" + status);
-          console.log("error :" + error);
-        console.log("xhr: "+ JSON.stringify(xhr));
-        if(xhr.status == '401') {
-            console.log("401");
-            window.location = '/login?error=true&exception=' + xhr.responseJSON.error;
-        }
-        else if(xhr.status == '403') {
-            window.location = '/denied?exception=' + xhr.responseJSON.error;
-        }
-      }
-    });
-  }
-</script>
+<div th:replace="layout/js::js-fragment"></div>
 </body>
 </html>
