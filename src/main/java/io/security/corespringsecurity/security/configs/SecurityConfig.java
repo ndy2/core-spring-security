@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider ajaxAuthenticationProvider;
+
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
 
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -43,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 //          auth.userDetailsService(userDetailsService);
         auth.authenticationProvider(authenticationProvider);
-
+        auth.authenticationProvider(ajaxAuthenticationProvider);
     }
 
     @Bean
