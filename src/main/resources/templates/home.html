@@ -11,9 +11,9 @@
                     <li class="nav-item">
                         <div style="padding-top:10px;" class="nav flex-column nav-pills" aria-orientation="vertical">
                             <a th:href="@{/}" style="margin:5px;" class="nav-link active">대시보드</a>
-                            <a th:href="@{/mypage}" style="margin:5px;" class="nav-link text-primary">마이페이지</a>
-                            <a th:href="@{/messages}" style="margin:5px;" class="nav-link text-primary">메시지</a>
-                            <a th:href="@{/config}" style="margin:5px;" class="nav-link text-primary">환경설정</a>
+                            <a href="#" onclick="getApi('mypage')" style="margin:5px;" class="nav-link text-primary">마이페이지</a>
+                            <a href="#" onclick="getApi('messages')" style="margin:5px;" class="nav-link text-primary">메시지</a>
+                            <a href="#" onclick="getApi('config')" style="margin:5px;" class="nav-link text-primary">환경설정</a>
                         </div>
                     </li>
                 </ul>
@@ -29,5 +29,42 @@
     </div>
 </div>
 <div th:replace="layout/footer::footer"></div>
+
+<script>
+  function getApi(location) {
+    var csrfHeader = $('meta[name="_csrf_header"]').attr('content')
+    var csrfToken = $('meta[name="_csrf"]').attr('content')
+
+    $.ajax({
+      type: "get",
+      url: "/api/"+location,
+      dataType: "json",
+      beforeSend: function (xhr) {
+          if(csrfHeader&& csrfToken){
+                console.log("csrf set");
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+          }
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.setRequestHeader("Content-type", "application/json");
+      },
+      success: function(data) {
+        console.log("data" +data);
+        window.location = '/'+location;
+      },
+      error: function (xhr, status, error) {
+          console.log("status :" + status);
+          console.log("error :" + error);
+        console.log("xhr: "+ JSON.stringify(xhr));
+        if(xhr.status == '401') {
+            console.log("401");
+            window.location = '/login?error=true&exception=' + xhr.responseJSON.error;
+        }
+        else if(xhr.status == '403') {
+            window.location = '/denied?exception=' + xhr.responseJSON.error;
+        }
+      }
+    });
+  }
+</script>
 </body>
 </html>

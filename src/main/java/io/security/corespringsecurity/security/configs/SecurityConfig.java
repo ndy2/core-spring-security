@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.UrlAuthorizationConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -82,11 +83,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationDetailsSource(authenticationDetailsSource)
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
-                .permitAll()
+                .permitAll();
 
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler);
+//                .and()
+//                .exceptionHandling()
+//                .accessDeniedHandler(accessDeniedHandler);
         http.csrf().disable();
         customConfigurer(http);
 
@@ -96,6 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private void customConfigurer(HttpSecurity http) throws Exception {
         http
+
                 .apply(new AjaxSecurityConfigurer<>())
                 .successHandlerAjax(ajaxAuthenticationSuccessHandler)
                 .failureHandlerAjax(ajaxAuthenticationFailureHandler)
@@ -107,7 +109,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(ajaxAccessDeniedHandler);
 
         http.authorizeRequests()
-                .antMatchers("/api/message").hasRole("USER");
+                .antMatchers("/api/mypage").hasRole("USER")
+                .antMatchers("/api/messages").hasRole("MANAGER")
+                .antMatchers("/api/config").hasRole("ADMIN")
+;
+
     }
 
     @Bean
