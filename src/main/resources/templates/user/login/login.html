@@ -24,13 +24,13 @@
                     <input type="password" class="form-control" name="password" placeholder="비밀번호" required="required">
                 </div>
                 <button type="submit" class="btn btn-lg btn-primary btn-block">Form 로그인</button>
-                <button type="button" onclick="ajaxLogin()" id="formbtn" class="btn btn-lg btn-primary btn-block">Ajax 로그인</button>
+                <button type="button" id="ajaxlogin" class="btn btn-lg btn-primary btn-block">Ajax 로그인</button>
 
             </form>
         </div>
     </div>
 </div>
 
-<script th:src="@{/js/ajaxlogin}"></script>
+<div th:replace="layout/js::ajax-js-fragment"></div>
 </body>
 </html>

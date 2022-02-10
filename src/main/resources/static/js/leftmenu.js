@@ -1,3 +1,23 @@
+$('#mypage').click(getMymenu);
+$('#messages').click(getMessages);
+$('#config').click(getConfig);
+
+function getMymenu(e){
+    e.preventDefault();
+    getApi('mypage');
+}
+
+function getMessages(e){
+    e.preventDefault();
+    getApi('messages');
+}
+
+function getConfig(e){
+    e.preventDefault();
+    getApi('config');
+}
+
+
 function getApi(location) {
     var csrfHeader = $('meta[name="_csrf_header"]').attr('content')
     var csrfToken = $('meta[name="_csrf"]').attr('content')
@@ -22,12 +42,20 @@ function getApi(location) {
             console.log("status :" + status);
             console.log("error :" + error);
             console.log("xhr: "+ JSON.stringify(xhr));
+            errorType = xhr.responseJSON.error;
             if(xhr.status == '401') {
-                console.log("401");
-                window.location = '/login?error=true&exception=' + xhr.responseJSON.error;
+                $.redirect('/login?error=true&exception=' + errorType,
+                    {
+                        exceptionMessage: xhr.responseJSON.message
+                    });
             }
             else if(xhr.status == '403') {
-                window.location = '/denied?exception=' + xhr.responseJSON.error;
+                $.redirect('/denied?exception=' +errorType,
+                {
+                    username : 'username',
+                    exceptionMessage: xhr.responseJSON.message
+                });
+
             }
         }
     });

@@ -1,3 +1,5 @@
+$('#ajaxlogin').click(ajaxLogin);
+
 function ajaxLogin(e) {
 
     var username = $("input[name='username']").val().trim();
